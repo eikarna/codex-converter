@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Codex Converter</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #1e1e1e; color: #fff; padding: 20px; }
+    textarea { width: 100%; height: 220px; background: #2d2d2d; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 10px; font-family: monospace; box-sizing: border-box; }
+    button { background: #007acc; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 6px; cursor: pointer; margin: 10px 0; font-weight: bold; }
+    button:hover { background: #005999; }
+  </style>
+</head>
+<body>
+  <h3>JSON Codex Account Converter</h3>
+  <p>Tempel JSON asli (bisa single object atau array):</p>
+  <textarea id="input" placeholder="Paste source JSON here..."></textarea>
+  <br>
+  <button onclick="convert()">Konversi & Salin</button>
+  <br>
+  <textarea id="output" placeholder="Hasil konversi..." readonly></textarea>
+
+  <script>
+    function convert() {
+      try {
+        const raw = JSON.parse(document.getElementById('input').value);
+        const list = Array.isArray(raw) ? raw : [raw];
+        const result = list.map(item => ({
+          accessToken: item.tokens?.access_token || item.accessToken || "",
+          refreshToken: item.tokens?.refresh_token || item.refreshToken || "",
+          idToken: item.tokens?.id_token || item.idToken || "",
+          email: item._meta?.email || item.email || ""
+        }));
+        const outText = JSON.stringify(result, null, 2);
+        document.getElementById('output').value = outText;
+        navigator.clipboard.writeText(outText);
+        alert('Berhasil dikonversi dan disalin ke clipboard!');
+      } catch (err) {
+        alert('Format JSON tidak valid: ' + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
